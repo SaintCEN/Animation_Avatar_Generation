@@ -20,7 +20,7 @@ class FaceDataset(Dataset):
         return len(os.listdir(self.root_dir))  # 返回数据集大小
 
     def __getitem__(self, idx):
-        img_name = os.path.join(self.root_dir, f"{idx}.jpg")  # 获取图像文件名
+        img_name = os.path.join(self.root_dir, f"({idx}).jpg")  # 获取图像文件名
         img = Image.open(img_name).convert('RGB')  # 打开图像并转换为RGB格式
         if self.transform:
             img = self.transform(img)  # 应用数据增强
@@ -75,7 +75,7 @@ def train():
     # 定义训练参数
     img_shape = (3, 64, 64)  # 图像形状 (通道数, 高度, 宽度)
     latent_dim = 100  # 潜在向量的维度
-    epochs = 70  # 训练轮数
+    epochs = 100 # 训练轮数
     batch_size = 64  # 批量大小
     learning_rate = 0.0002
 
@@ -87,7 +87,7 @@ def train():
     ])
 
     # 读入数据
-    dataset = FaceDataset(tags_file='train.csv', root_dir='./img', transform=transform)
+    dataset = FaceDataset(tags_file='train.csv', root_dir='./faces', transform=transform)
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
     # 初始化生成器和判别器
@@ -126,7 +126,7 @@ def train():
             optimizer_D.step()
 
             # 打印损失
-            if i % 10 == 0:
+            if i % 100 == 0:
                 print(f"[Epoch {epoch}/{epochs}] [Batch {i}/{len(dataloader)}] "
                       f"[D loss: {d_loss.item()}] [G loss: {g_loss.item()}]")
 

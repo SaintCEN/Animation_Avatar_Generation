@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生成图片</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="box" id="image-box">
+            <img src="./img/chino.webp" alt="chino" id = "generated-image">
+        </div>
+        <div class="box" id="text-box">
+            <p>Click To Generate</p>
+        </div>
+        <div class="box" id="button-box">
+            <button id="generate-btn">Ciallo</button>
+        </div>
+    </div>
+    <script>
+        document.getElementById('generate-btn').addEventListener('click', function(){
+            const imageBox = document.getElementById('image-box');
+            imageBox.style.display = 'none'; // 设置为不可见
+            const textBox = document.getElementById('text-box');
+            textBox.style.display = 'none'; // 设置为不可见
+            const btnBox = document.getElementById('button-box');
+            btnBox.innerText = 'Click To Save'; // 设置为不可见
+            // 调用后端 API
+            fetch('http://localhost:5000/generate-image')  // 确保路径正确
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            const imageUrl = URL.createObjectURL(blob);
+            const imgElement = document.getElementById('generated-image');
+            imgElement.src = imageUrl;
+
+            // 添加下载链接
+            const downloadLink = document.createElement('a');
+            downloadLink.href = imageUrl;
+            downloadLink.download = 'generated-image.png';
+            downloadLink.innerText = '另存为';
+            document.getElementById('button-box').appendChild(downloadLink);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('生成图片失败，请检查控制台日志。');
+        });
+        });
+    </script>
+</body>
+</html>
